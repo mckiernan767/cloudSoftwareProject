@@ -1,0 +1,24 @@
+<div class="row-fluid">
+	<div class="span2">
+	  <!--Sidebar content-->
+		<div  ng-include="'partials/admin/leftMenu.html'"></div>
+	</div>
+	<div class="span10">
+		<!--Body content-->
+		<h2>Upload Datacentre</h2>
+		<div class="row">
+			<div class="span4">
+			    <div class="dropzone" datacenter-dropzone="[text/xml]"
+			  		  data-reload-callback="reload()" data-max-file-size="15">
+			      	<span><em>Drop full datacentre file here</em></span>
+			    </div>
+			</div>
+			<div class="span6">
+				<p>
+	  				<small>Note: The datacentre xml file format is predefined.</small>
+				</p>
+			</div>   
+	    </div>
+	    <br/>
+	</div>
+</div>

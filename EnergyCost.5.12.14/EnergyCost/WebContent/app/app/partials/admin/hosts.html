@@ -1,0 +1,169 @@
+<div class="row-fluid">
+	<div class="span2">
+	  <!--Sidebar content-->
+		<div  ng-include="'partials/admin/leftMenu.html'"></div>
+	</div>
+	<div class="span10">
+		<!--Body content-->
+		<!-- modal code start-->
+		<div modal="shouldBeOpen" close="closeModal()" options="opts">
+			<form name="form" novalidate class="form-horizontal">
+			    <div class="modal-header">
+			        <div ng-switch="isEdit">
+		    			<h3 ng-switch-when="true">Update Host</h3>
+		    			<h3 ng-switch-when="false">Create Host</h3>
+					</div>
+			    </div>
+			    <div class="modal-body">
+					<div class="control-group" ng-show="isEdit">		    			
+			    		<label class="control-label" for="inputId" >Id</label>
+			    		<div class="controls">
+			    			<input id="inputId" ng-model="host.id" class="uneditable-input"/>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputHostDc" >Datacentre</label>
+			    		<div class="controls">
+			    			<select id="inputHostDc" ng-model="selectedHostDc"  ng-options="dc.name for dc in datacenters" required>
+			    				 <option value="">Select Datacentre</option>
+			    			</select>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputHostFloor">Floor</label>
+			    		<div class="controls">
+			    			<select id="inputHostFloor" ng-model="selectedHostFloor" ng-disabled="!selectedHostDc"  ng-options="floor.name for floor in floors" required>
+			    				 <option value="">Select Floor</option>
+			    			</select>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputHostRack">Rack</label>
+			    		<div class="controls">
+			    			<select id="inputHostRack" ng-model="selectedHostRack" ng-disabled="!selectedHostFloor"  ng-options="rack.name for rack in racks" required>
+			    				 <option value="">Select Rack</option>
+			    			</select>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputHostModelGroup">Model group</label>
+			    		<div class="controls">
+			    			<select id="inputHostModelGroup" ng-model="selectedHostModelGroup" ng-options="mg.name for mg in modelGroups" required>
+			    				 <option value="">Select Model group</option>
+			    			</select>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputHostType">Host type</label>
+			    		<div class="controls">
+			    			<select id="inputHostType" ng-model="selectedHostType" ng-options="ht.id for ht in hostTypes" required>
+			    				 <option value="">Select Host type</option>
+			    			</select>
+			    		<!--	<input id="inputHostType" ng-model="host.hostType" ng-init="host.hostType='SERVER'" type="text" required/> -->
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputName" >Name</label>
+			    		<div class="controls">
+			    			<input id="inputName" ng-model="host.name"  type="text" required/>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputDescr" >Description</label>
+			    		<div class="controls">
+			    			<input id="inputDescr" ng-model="host.description"  type="text" required/>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputIPAdress" >IP address</label>
+			    		<div class="controls">
+			    			<input id="inputIPAddress" ng-model="host.IPAddress"  type="text" required/>
+			    		</div>	
+			    	</div>
+					<div class="control-group">		    			
+			    		<label class="control-label" for="inputProcessorCount" ># Processors</label>
+			    		<div class="controls">
+			    			<input id="inputProcessorCount" ng-model="host.processorCount"  type="text" required/>
+			    		</div>	
+			    	</div>
+					<div class="control-group" ng-show="isVM()">		    			
+			    		<label class="control-label" for="inputVMCount" ># VMs</label>
+			    		<div class="controls">
+			    			<input id="inputVMCount" ng-model="host.VMCount"  type="text" ng-required="isVM()"/>
+			    		</div>	
+			    	</div>
+			    </div>
+			    <div class="modal-footer form-actions">
+			    	<button class="btn btn-primary" ng-click="save(host, isEdit)" ng-disabled="form.$invalid">Save</button>
+			        <button class="btn" ng-click="closeModal()">Cancel</button>
+			    </div>
+		    </form>
+		</div>
+		<!-- modal code end-->
+		<h2>Hosts</h2>
+		<div class="row-fluid">
+		<div class="pull-left">
+			<div class="input-append">
+				<label class="add-on"><strong>Datacentre</strong></label>
+				<select id="ddlSelectedDc"  ng-model="selectedDatacenter" ng-options="dc.name for dc in datacenters">
+					<option value="">Select datacentre</option>
+				</select>	
+			</div>
+		</div>
+			<div class="pull-right" ng-show="selectedDatacenter">
+				<div class="input-append">
+					<div class="input-prepend">
+						<span class="add-on"><i class="icon-search"></i></span>
+						<input type="text" ng-model="searchText" placeholder="Type to start searching" >
+					</div>
+				<button class="btn btn-primary" ng-click="openCreateModal()">Add host</button>
+				</div>
+			</div>
+		</div>
+		<div  class="row-fluid"  ng-show="selectedDatacenter">
+			<table class="table table-condensed table-bordered">
+			<thead>
+				<tr>
+					<th width="6%">Id</th>
+					<th>Floor</th>
+					<th>Rack</th>
+					<th>Host</th>
+					<th>Host type</th>
+					<th>Host description</th>
+					<th>IP Address</th>
+					<th># Processors</th>
+					<th>Model group</th>
+					<th># VMs</th>
+					<th width="9%"></th>	
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat ='host in hosts | filter:searchText'>
+					<td>{{host.hostId}}</td>
+					<td>{{host.floorName}}</td>
+					<td>{{host.rackName}}</td>
+					<td>{{host.hostName}}</td>
+					<td>{{host.hostType}}</td>
+					<td>{{host.hostDescription}}</td>
+					<td>{{host.IPAddress}}</td>
+					<td>{{host.processorCount}}</td>
+					<td>{{host.modelGroupName}}</td>
+					<td>
+						<span ng-if="host.hostType == 'VM_SERVER'">
+						{{host.VMCount}}
+						</span>
+						<span ng-if="host.hostType != 'VM_SERVER'">
+						N/A
+						</span>						
+					</td>
+					<td>
+						<button type="button" class="btn btn-primary btn-mini" ng-click="openEditModal(host)">Edit</button>
+						<button type="button" class="btn btn-danger btn-mini"  ng-click="openConfirmDeleteMsgBox(host)" >Delete</button>
+					</td>
+				</tr>
+			</tbody>	
+			</table>
+		</div>
+	</div>
+</div>
+
