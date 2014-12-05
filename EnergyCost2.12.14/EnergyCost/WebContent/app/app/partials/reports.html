@@ -1,0 +1,226 @@
+<div class="row-fluid">
+	<div class="span2">
+		<div>
+			<div style="overflow:scroll;height:400px;width:100%;overflow:auto">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>Reports Archive</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat ='reportItem in reports'>
+							<td>
+								<button class="btn btn-link" ng-click="showReport(reportItem)" type="button">Report {{reportItem.modifiedDate | date:'yyyy-MM-dd HH:mm Z'}}</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="span10">
+		<h2>Reports</h2>
+
+		<div class="pull-right">
+			<button class="btn btn-primary" ng-click="openCreateModal()">Create Report</button>	
+		</div>
+		<!-- modal code start-->
+		<div modal="shouldBeOpen" close="closeModal()" options="opts">
+			<form name="form"  novalidate class="form-horizontal">
+				<div class="modal-header">
+					<h3>Create Report</h3>
+				</div>
+				<div class="modal-body">
+					<div class="control-group">  
+			    		<label class="control-label" for="inputDatacenter">Datacentre</label>
+			    		<div class="controls">
+				    		<select id="ddlSelectedDc"  ng-model="reportParam.datacenter" ng-options="dc.name for dc in datacenters" required>
+								<option value="">Select datacentre</option>
+							</select>	
+			    		</div>	
+			    	</div>
+					<div class="control-group">  
+			    		<label class="control-label" for="inputPue">PUE</label>
+			    		<div class="controls">
+			    			<input class="input-small" id="inputPue" ng-model="reportParam.pue" type="text" required/>
+			    		</div>	
+			    	</div>
+					<div class="control-group">  
+			    		<label class="control-label" for="inputCostEnergy">Energy Cost</label>
+			    		<div class="controls">
+			    			<input class="input-small" id="inputCostEnergy" ng-model="reportParam.energyCost" type="text" required/><span class="help-block">The unit cost of energy per KWhr (e.g.$0.20/KWhr)</span>
+			    		</div>	
+			    	</div>
+					<div class="control-group">  
+			    		<label class="control-label" for="inputCostCarbon">Carbon Conversion (SEAI)</label>
+			    		<div class="controls">
+			    			<input class="input-small" id="inputCostCarbon" ng-model="reportParam.carbonCost" type="text" required/><span class="help-block">The value of Carbon per Kwhr of Energy (e.g. 0.05 KgCo2/KWhr)</span>
+			    		</div>	
+			    	</div>
+			    	<div class="control-group">
+			    		<label class="control-label">Audit Start Date</label>  
+			    		<div class="controls">
+						  <input class="inputStartDate" ng-model="reportParam.startTime" type="text" placeholder="yyyy-MM-dd" required>
+						</div>
+			    	</div>
+			    	<div class="control-group">
+			    		<label class="control-label">Audit End Date</label>  
+			    		<div class="controls">
+						  <input class="inputEndDate" ng-model="reportParam.endTime" type="text" placeholder="yyyy-MM-dd" required>
+						</div>
+			    	</div>
+			    </div>
+
+		    	<div class="modal-footer form-actions"> 
+		    		<button class="btn btn-primary" ng-click="create(reportParam)" ng-disabled="form.$invalid">Create</button>
+		    		<button class="btn" ng-click="closeModal()">Cancel</button>
+		    	</div>
+			</form>
+		</div>
+		<!-- modal code end-->
+		<div ng-show="!report">
+			<p class="lead"> Note: Please choose report from the archive or create a new.</p>
+		</div>
+		<div ng-show="report">
+			<div>
+				<h3>Parameter Settings</h3>
+				<span><b>Datacentre:</b> {{report.datacenterName}}</span><br/>
+				<span><b>PUE Estimate:</b> {{report.pue}}</span><br/>
+				<span><b>Energy Cost:</b> {{report.energyCost}}</span><br/>
+				<span><b>Carbon Cost:</b> {{report.carbonCost}}</span><br/>
+				<!--times 1000 to get javascript time -->
+				<span><b>Audit Period:</b> {{report.startTime*1000 | date:'yyyy-MM-dd HH:mm Z'}} - {{report.endTime*1000 | date:'yyyy-MM-dd HH:mm Z'}}</span><br/>
+				<span><b>Created:</b> {{report.createDate*1000 | date:'yyyy-MM-dd HH:mm Z'}}</span><br/>
+				<!-- <span><b>Message:</b> {{report.message}}</span><br/> -->
+			</div>
+
+		  <tabset justified="true">
+		    <tab heading="Hosts">
+				<div ng-show="!hostDataAvailable">
+		    		No host data available					
+				</div>		    
+		    	<div ng-show="hostDataAvailable">
+					<div>
+						<h4>Most Used Hosts</h4>
+						<table class="table table-condensed">
+							<thead>
+								<tr>
+									<th>IP Adress</th>
+									<th>Name</th>
+									<th>Average Cpu Usage(%)</th>
+									<th>Energy Consumption,{{extrapolateYears}}y (KWhr)</th>
+									<th>Operational Cost,{{extrapolateYears}}y (&#8364;)</th>
+									<th>Apparent Cost Wastage,{{extrapolateYears}}y (&#8364;)</th>
+									<th>Carbon Footprint,{{extrapolateYears}}y (KgCO2)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat ='topHostReport in topHostReports'>
+									<td>{{topHostReport.IPAddress}}</td>
+									<td>{{topHostReport.hostName}}</td>
+									<td>{{topHostReport.averageCpuUsage |number:2}}</td>
+									<td>{{topHostReport.energyConsumption |number:2}}</td>
+									<td>{{topHostReport.operationalCost |number:2}}</td>
+									<td>{{topHostReport.apparentWastageCost |number:2}}</td>
+									<td>{{topHostReport.carbonFootprint |number:2}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>	
+					<div>
+						<h4>Least Used Hosts</h4>
+						<table class="table table-condensed">
+							<thead>
+								<tr>
+									<th>IP Adress</th>
+									<th>Name</th>
+									<th>Average Cpu Usage(%)</th>
+									<th>Energy Consumption,{{extrapolateYears}}y (KWhr)</th>
+									<th>Operational Cost,{{extrapolateYears}}y (&#8364;)</th>
+									<th>Apparent Cost Wastage,{{extrapolateYears}}y (&#8364;)</th>
+									<th>Carbon Footprint,{{extrapolateYears}}y (KgCO2)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat ='leastHostReport in leastHostReports'>
+									<td>{{leastHostReport.IPAddress}}</td>
+									<td>{{leastHostReport.hostName}}</td>
+									<td>{{leastHostReport.averageCpuUsage |number:2}}</td>
+									<td>{{leastHostReport.energyConsumption |number:2}}</td>
+									<td>{{leastHostReport.operationalCost |number:2}}</td>
+									<td>{{leastHostReport.apparentWastageCost |number:2}}</td>
+									<td>{{leastHostReport.carbonFootprint |number:2}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>	
+					<div>
+						<h4>Consolidation Candidate Hosts</h4>
+						<table class="table table-condensed">
+							<thead>
+								<tr>
+									<th>IP Adress</th>
+									<th>Name</th>
+									<th>Average Cpu Usage(%)</th>
+									<th>Energy Consumption,{{extrapolateYears}}y (KWhr)</th>
+									<th>Operational Cost,{{extrapolateYears}}y (&#8364;)</th>
+									<th>Apparent Cost Wastage,{{extrapolateYears}}y (&#8364;)</th>
+									<th>Carbon Footprint,{{extrapolateYears}}y (KgCO2)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat ='consolidationHostReport in consolidationHostReports'>
+									<td>{{consolidationHostReport.IPAddress}}</td>
+									<td>{{consolidationHostReport.hostName}}</td>
+									<td>{{consolidationHostReport.averageCpuUsage |number:2}}</td>
+									<td>{{consolidationHostReport.energyConsumption |number:2}}</td>
+									<td>{{consolidationHostReport.operationalCost |number:2}}</td>
+									<td>{{consolidationHostReport.apparentWastageCost |number:2}}</td>
+									<td>{{consolidationHostReport.carbonFootprint |number:2}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>	
+		    </tab>
+		    <tab heading="Racks">
+				<div ng-show="!rackDataAvailable">
+		    		No rack data available					
+				</div>		    
+		    	<div ng-show="rackDataAvailable">
+					<h4>Racks</h4>
+					<div>
+						<p class="text-error">
+							<div class="text-error"> RED</div>Rack Power very close to PUD Maximum rating
+							(Need to reduce the energy on this rack because the rating is very close to MAX PUD rating and may cause a Rack failure. Could look to move some servers to a GREEN rack)
+						</p>
+						<p>
+						 <div class="text-success"> GREEN</div>  Rack Power Within PDU range
+(This rack can easily take more servers or it can be consolidated and switched OFF if the servers can be moved else where)	
+						</p>
+					</div>
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Power Capacity, PDU(KW)</th>
+								<th>Worst Case Power(KW)</th>
+								<th>Average Power(KW)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat ='rackReport in rackReports' ng-class="setRowIndicator(rackReport)">
+								<td>{{rackReport.rackName}}</td>
+								<td>{{rackReport.pdu |number:2}}</td>
+								<td>{{rackReport.maxPower |number:2}}</td>
+								<td>{{rackReport.averagePower |number:2}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>	
+		    </tab>
+		  </tabset>
+		</div>
+	</div>	
+</div>

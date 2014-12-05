@@ -1,0 +1,35 @@
+<h2>Examples (trying out things)</h2>
+<div  class="row-fluid">
+	<h4>Interpolate filter </h4>
+	  Showing of 'interpolate' filter:
+  {{ 'Current version is v%VERSION%.' | interpolate }}
+</div>
+<div  class="row-fluid">
+	<h4>D3 Line chart</h4>
+	<div class="span12">
+		<d3-line-chart data="d3LineData" width="800" height="300"  on-click="setAppsPieChartData(item)">
+		</d3-line-chart>
+		line item:{{lineItem}}
+	</div>
+</div>
+<div  class="row-fluid">
+	<div class="span6">
+		<h4>D3 Bar chart</h4>
+		<d3-bar-chart data="d3BarData" bar-height="20" bar-padding="5" on-click="ShowbarItemData(item)"></d3-bar-chart>
+		bar item:{{barItem}}
+	</div>
+	<div class="span6">
+		<h4>D3 Pie chart</h4>
+		<d3-pie-chart data="d3PieData" doughnut="true" height="150" width="600"></d3-pie-chart>
+	</div>
+</div>
+<div  class="row-fluid">
+	<h4>Testing notification</h4>
+	
+	<button ng-click="pop()">Show a Toasters</button>
+	<script type="text/ng-template" id="toasterBodyTmpl.html">
+	    <p>Render a template!</p>
+	</script>
+
+</div>
+

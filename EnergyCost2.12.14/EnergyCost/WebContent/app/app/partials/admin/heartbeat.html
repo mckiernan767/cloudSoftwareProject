@@ -1,0 +1,51 @@
+<div class="row-fluid">
+<div class="span2">
+  <!--Sidebar content-->
+	<div  ng-include="'partials/admin/leftMenu.html'"></div>
+</div>
+<div class="span10">
+	<!--Body content-->
+	<h2>Heartbeat</h2>
+	<p class="lead"> Note: Please select datacentre to list inactive hosts for the last 10 minutes</p>
+	<div class="row-fluid">
+		<div class="pull-left">
+			<div class="input-append">
+				<label class="add-on"><strong>Datacentre</strong></label>
+				<select id="ddlSelectedDc"  ng-model="selectedDatacenter" ng-options="dc.name for dc in datacenters">
+					<option value="">Select datacentre</option>
+				</select>	
+			</div>
+		</div>
+		<div class="pull-right" ng-show="selectedDatacenter">
+			<div class="input-append">
+				<div class="input-prepend">
+					<span class="add-on"><i class="icon-search"></i></span>
+					<input type="text" ng-model="searchText" placeholder="Type to start searching" >
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row-fluid" ng-show="selectedDatacenter">
+			<table class="table table-condensed table-bordered">
+			<thead>
+				<tr>
+					<th width="6%">Id</th>
+					<th>Name</th>
+					<th>Host description</th>
+					<th>IP Address</th>
+					<th>Host type</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat ='host in hosts | filter:searchText'>
+					<td>{{host.id}}</td>
+					<td>{{host.name}}</td>
+					<td>{{host.description}}</td>
+					<td>{{host.IPAddress}}</td>
+					<td>{{host.hostType}}</td>
+				</tr>
+			</tbody>	
+			</table>
+	</div>
+</div>
+</div>

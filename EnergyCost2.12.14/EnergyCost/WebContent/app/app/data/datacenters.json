@@ -1,0 +1,14 @@
+[
+	{
+    "id":1,
+    "name": "datacenter 1"
+    },
+	{
+    "id":2,
+    "name": "datacenter 2"
+    },
+	{
+    "id":3,
+    "name": "datacenter 3"
+    }
+]

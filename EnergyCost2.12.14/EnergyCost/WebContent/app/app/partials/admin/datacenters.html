@@ -1,0 +1,102 @@
+<div class="row-fluid">
+<div class="span2">
+  <!--Sidebar content-->
+	<div  ng-include="'partials/admin/leftMenu.html'"></div>
+</div>
+<div class="span10">
+	<!--Body content-->
+	<!-- modal code start-->
+	<div modal="shouldBeOpen" close="closeModal()" options="opts">
+		<form name="form"  novalidate class="form-horizontal">
+		    <div class="modal-header">
+		        <div ng-switch="isEdit">
+	    			<h3 ng-switch-when="true">Update Datacentre</h3>
+	    			<h3 ng-switch-when="false">Add Datacentre</h3>
+				</div>
+		    </div>
+		    <div class="modal-body">
+				<div class="control-group" ng-show="isEdit">  
+		    		<label class="control-label" for="inputId" >Id</label>
+		    		<div class="controls">
+		    			<input id="inputId" ng-model="dc.id" class="uneditable-input"/>
+		    		</div>	
+		    	</div>
+				<div class="control-group">		    			
+		    		<label class="control-label" for="inputName" >Name</label>
+		    		<div class="controls">
+		    			<input id="inputName" ng-model="dc.name"  type="text" required/>
+		    		</div>	
+		    	</div>
+				<div class="control-group">		    			
+		    		<label class="control-label" for="inputDescr" >Description</label>
+		    		<div class="controls">
+		    			<input id="inputDescr" ng-model="dc.description"  type="text" required/>
+		    		</div>	
+		    	</div>
+		    	<!-- Note interesting at the moment 
+				<div class="control-group">		    			
+		    		<label class="control-label" for="inputLong" >Longitude</label>
+		    		<div class="controls">
+		    			<input id="inputLong" ng-model="dc.longitude"  type="text" required/>
+		    		</div>	
+		    	</div>
+				<div class="control-group">		    			
+		    		<label class="control-label" for="inputLat" >Latitude</label>
+		    		<div class="controls">
+		    			<input id="inputLat" ng-model="dc.latitude"  type="text" required/>
+		    		</div>	
+		    	</div>
+		    	-->
+		    </div>
+		    <div class="modal-footer form-actions">
+		    	<button class="btn btn-primary" ng-click="save(dc, isEdit)" ng-disabled="form.$invalid">Save</button>
+		        <button class="btn" ng-click="closeModal()">Cancel</button>
+		    </div>
+	    </form>
+	</div>
+	<!-- modal code end-->
+	<h2>Datacentres</h2>
+	<div class="row-fluid">
+		<div class="pull-right">
+			<div class="input-append">
+				<div class="input-prepend">
+					<span class="add-on"><i class="icon-search"></i></span>
+					<input type="text" ng-model="searchText" placeholder="Type to start searching" >
+				</div>
+			<button class="btn btn-primary" ng-click="openCreateModal()">Add Datacentre</button>
+			</div>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<table class="table table-condensed table-bordered">
+			<thead>
+				<tr>
+					<th width="6%">Id</th>
+					<th>Name</th>
+					<th>Description</th>
+					<!-- Note interesting at the moment 
+					<th>Longitude</th>
+					<th>Latitude</th>
+					-->
+					<th width="9%"></th>	
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat ='dc in datacenters | filter:searchText'>
+					<td>{{dc.id}}</td>
+					<td>{{dc.name}}</td>
+					<td>{{dc.description}}</td>
+					<!-- Note interesting at the moment 
+					<td>{{dc.longitude}}</td>
+					<td>{{dc.latitude}}</td>
+					-->
+					<td>
+						<button type="button" class="btn btn-primary btn-mini" ng-click="openEditModal(dc)">Edit</button>
+						<button type="button" class="btn btn-danger btn-mini" ng-click="openConfirmDeleteMsgBox(dc)">Delete</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+</div>

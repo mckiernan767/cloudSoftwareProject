@@ -1,0 +1,72 @@
+<div class="row-fluid">
+	<div class="span2">
+	  <!--Sidebar content-->
+		<div  ng-include="'partials/admin/leftMenu.html'"></div>
+	</div>
+	<div class="span10">
+		<!--Body content-->
+		<h2>Powermodels</h2>
+		<div class="row-fluid">
+			<div class="span4">
+			    <div class="dropzone" power-model-dropzone="[text/xml]"
+			  		file="image" data-power-model-group="{{selectedPmg}}" data-test="test()" data-reload-callback="reload()" file-name="imageFileName" data-max-file-size="3">
+			      	<span><em>Drop powermodel file here</em></span>
+			    </div>
+			</div>
+			<div class="span6">
+				<p>
+	  				<small>Note: uploading existing powermodels requires you to upload to 
+	  				the correct powermodel group and that its a higher versionnumber.</small>
+				</p>
+			</div>   
+	    </div>
+	    <br/>
+		<div class="row-fluid">
+			<div class="pull-left">
+				<div class="input-append">
+					<label class="add-on"><strong>Powermodel group</strong></label>
+					<select id="ddlSelectedPmg"  ng-model="selectedPmg" ng-options="pmg.name for pmg in powerModelGroups">
+						<option value="">Select powermodel group</option>
+					</select>	
+				</div>
+			</div>		
+			<div ng-show="selectedPmg">
+				<div class="pull-right">
+					<div class="input-append">
+						<div class="input-prepend" ng-show="selectedPmg">
+							<span class="add-on"><i class="icon-search"></i></span>
+							<input type="text" ng-model="searchText" placeholder="Type to start searching" >
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid" ng-show="selectedPmg">
+			<table class="table table-condensed table-bordered">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Power mode</th>
+						<th>Version</th>
+						<th width="9%"></th>	
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat ='pm in powerModels | filter:searchText'>
+						<td>{{pm.id}}</td>
+						<td>{{pm.name}}</td>
+						<td>{{pm.description}}</td>
+						<td>{{pm.powerMode}}</td>
+						<td>{{pm.modelVersion}}</td>
+						<td>
+							<!--<button type="button" class="btn btn-primary btn-xs" ng-click="openEditModal(pm)">Edit</button> -->
+							<button type="button" class="btn btn-danger btn-mini"  ng-click="openConfirmDeleteMsgBox(pm)" >Delete</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>		
+	</div>
+</div>

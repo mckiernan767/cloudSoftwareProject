@@ -1,0 +1,82 @@
+<div  class="row-fluid">
+	<div class="span2">
+		<div  class="row-fluid">
+			<div class="controls">
+				<label class="control-label" for="selectedDc" >Datacentre</label>
+				<select id="selectedDc"  ng-model="selectedDc" ng-options="dc.name for dc in datacenters">
+					<option value="">Select Datacentre</option>
+				</select>
+			</div>
+			<div class="controls">
+				<label class="control-label" for="selectedFloor" >Floor</label>
+				<select id="selectedFloor" ng-model="selectedFloor" ng-disabled="!selectedDc"  
+					ng-options="floor.name for floor in floors" required>
+			    	<option value="">Select Floor</option>
+			    </select>
+			</div>    
+			<div class="controls">
+				<label class="control-label" for="selectedRack" >Rack</label>
+				<select id="selectedRack" ng-model="selectedRack" ng-disabled="!selectedFloor"  
+					ng-options="rack.name for rack in racks" required>
+			    	<option value="">Select Rack</option>
+			    </select>
+			</div>    
+		</div>
+		<label class="control-label" for="selectedHost" >Host</label>
+		<div  class="row-fluid" ng-show="selectedRack">
+			<div style="overflow:scroll;height:200px;width:100%;overflow:auto">
+				<table class="table table-condensed">
+					<tbody>
+						<tr ng-repeat ='h in hosts'>						
+							<td>
+								<button class="btn btn-link" ng-click="getActivity(h)" type="button">{{h.name}}</button>
+							</td>
+							<td>{{h.IPAddress}}</td>
+						</tr>
+					</tbody>	
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="span10">
+		<h2>Host dashboard</h2>
+		<div ng-show="!selectedHost">
+			<p class="lead"> Note: Please select datacentre/floor/rack/host to see power consumption</p>
+		</div>
+		<div ng-show="selectedHost">
+			<div class="row-fluid">
+				<h4>Power consumption</h4>
+							<!-- line item:{{lineItem}} -->
+				<div class="pull-left">
+					<div class="controls">
+						<label class="control-label" for="selectedTimeSpan" >Time interval</label>
+						<select id="selectedTimeSpan" ng-model="selectedTimeSpan" required>
+					    	<option value="24">24 Hour interval</option>
+					    	<option value="12">12 Hour interval</option>
+					    	<option value="1">1 Hour interval</option>
+					    </select>
+					</div>    
+				</div>
+			</div>	    
+			<div  class="row-fluid">
+					<d3-line-chart data="d3LineData" width="800" height="300"  
+						on-click="setAppsPieChartData(item)">
+					</d3-line-chart>
+			</div>
+			<div  class="row-fluid">
+				<div class="span3">
+				<h4>Host info</h4>					
+					<span><b>Name:</b> {{selectedHost.name}}</span><br/>
+					<span><b>Description:</b> {{selectedHost.description}}</span><br/>
+					<span><b>IP:</b> {{selectedHost.IPAddress}}</span><br/>
+					<span><b>Type:</b> {{selectedHost.hostType}}</span><br/>
+					<span><b># Processors:</b> {{selectedHost.processorCount}}</span><br/>
+				</div>	
+				<div class="span9">
+					<h4>Top 3 apps for chosen time</h4>
+					<d3-pie-chart  data="d3AppsData" doughnut="true" height="150" width="600"></d3-pie-chart>
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
